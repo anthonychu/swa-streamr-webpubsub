@@ -18,7 +18,7 @@ namespace Api4
             var response = req.CreateResponse(HttpStatusCode.OK);
             response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
 
-            response.WriteString("Welcome to Azure Functions!");
+            response.WriteString($"Hello from Azure Functions .NET version: {System.Environment.Version}");
 
             return response;
         }
