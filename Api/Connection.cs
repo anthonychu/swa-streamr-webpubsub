@@ -1,33 +1,52 @@
 using System;
-using System.IO;
+using System.Collections.Generic;
+using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
+using Azure.Messaging.WebPubSub;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Api
 {
-    public static class Connection
+    public class Connection
     {
-        [FunctionName("Connection")]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
-            ILogger log)
+        [Function("Connection")]
+        public async Task<HttpResponseData> RunAsync([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req,
+            FunctionContext executionContext)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
+            var logger = executionContext.GetLogger<Connection>();
+            logger.LogInformation("C# HTTP trigger function processed a request.");
 
-            string name = req.Query["name"];
+            var canSend = true;
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
+            var connectionString = Environment.GetEnvironmentVariable("WebPubSubConnectionString");
+            var client = new WebPubSubServiceClient(connectionString, "streamr");
 
-            string responseMessage = $"Hello from Azure Functions .NET version: {System.Environment.Version}";
+            var roles = new List<string> { "webpubsub.joinLeaveGroup.streamr" };
+            if (canSend)
+            {
+                roles.Add("webpubsub.sendToGroup.streamr");
+            }
 
-            return new OkObjectResult(responseMessage);
+            var uri = await client.GenerateClientAccessUriAsync(TimeSpan.FromHours(1), "test", roles);
+
+            var response = req.CreateResponse(HttpStatusCode.OK);
+            response.Headers.Add("Content-Type", "application/json");
+            response.WriteString(JsonSerializer.Serialize(new ConnectionResult
+            {
+                Uri = uri.AbsoluteUri,
+                CanSend = canSend
+            }));
+
+            return response;
+        }
+
+        public class ConnectionResult
+        {
+            public string Uri { get; set; }
+            public bool CanSend { get; set; }
         }
     }
 }

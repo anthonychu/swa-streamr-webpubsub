@@ -1,4 +1,5 @@
 ﻿@page "/"
+@inject HttpClient Http
 
 <PageTitle>Index</PageTitle>
 
@@ -7,3 +8,22 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var connection = await Http.GetFromJsonAsync<ConnectionResult>("http://localhost:7071/api/connection");
+        if (connection == null)
+        {
+            throw new Exception("Unable to retrieve connection string");
+        }
+        
+        Console.WriteLine(connection.Uri);
+    }
+
+    public class ConnectionResult
+    {
+        public string Uri { get; set; } = "";
+        public bool CanSend { get; set; }
+    }
+}
