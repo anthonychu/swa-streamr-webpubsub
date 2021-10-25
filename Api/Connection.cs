@@ -19,7 +19,8 @@ namespace Api
             var logger = executionContext.GetLogger<Connection>();
             logger.LogInformation("C# HTTP trigger function processed a request.");
 
-            var canSend = true;
+            var userId = StaticWebAppsAuth.ParseUserInfo(req)?.Identity.Name;
+            var canSend = userId != null;
 
             var connectionString = Environment.GetEnvironmentVariable("WebPubSubConnectionString");
             var client = new WebPubSubServiceClient(connectionString, "streamr");
@@ -30,7 +31,7 @@ namespace Api
                 roles.Add("webpubsub.sendToGroup.streamr");
             }
 
-            var uri = await client.GenerateClientAccessUriAsync(TimeSpan.FromHours(1), "test", roles);
+            var uri = await client.GenerateClientAccessUriAsync(TimeSpan.FromHours(1), userId, roles);
 
             var response = req.CreateResponse(HttpStatusCode.OK);
             response.Headers.Add("Content-Type", "application/json");

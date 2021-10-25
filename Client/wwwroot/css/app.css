@@ -82,3 +82,6 @@ a, .btn-link {
         font-size: 8px;
     }
 
+#myCanvas {
+    display: none;
+}
