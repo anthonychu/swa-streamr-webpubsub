@@ -1,4 +1,7 @@
 ﻿@page "/"
+@using System.Net.WebSockets
+@using System.Text
+@using System.Text.Json
 @inject HttpClient Http
 
 <PageTitle>Index</PageTitle>
@@ -19,6 +22,48 @@ Welcome to your new app.
         }
         
         Console.WriteLine(connection.Uri);
+
+        var websocket = new ClientWebSocket();
+        websocket.Options.AddSubProtocol("json.webpubsub.azure.v1");
+        await websocket.ConnectAsync(new Uri(connection.Uri), CancellationToken.None);
+        Console.WriteLine("Connected");
+
+        _ = RunReceiveLoop(websocket);
+
+        var joinGroupMessage = new
+        {
+            type = "joinGroup",
+            group = "streamr",
+            ackId = 1
+        };
+
+        Console.WriteLine("Joining group...");
+        await websocket.SendAsync(
+            Encoding.UTF8.GetBytes(JsonSerializer.Serialize(joinGroupMessage)),
+            WebSocketMessageType.Text,
+            true,
+            CancellationToken.None);
+    }
+
+    async Task RunReceiveLoop(ClientWebSocket websocket)
+    {
+        ArraySegment<byte> buffer = new (new byte[2048]);
+        if (buffer.Array == null) throw new Exception("Buffer array is null");
+
+        while(true)
+        {
+            WebSocketReceiveResult result;
+            using var ms = new MemoryStream();
+            do
+            {
+                result = await websocket.ReceiveAsync(buffer, CancellationToken.None);
+                ms.Write(buffer.Array, buffer.Offset, result.Count);
+            } while (!result.EndOfMessage);
+
+            ms.Seek(0, SeekOrigin.Begin);
+            var message = Encoding.UTF8.GetString(ms.ToArray());
+            System.Console.WriteLine(message);
+        }
     }
 
     public class ConnectionResult
