@@ -43,7 +43,7 @@
           ascii.fromCanvas(canvas, {
             contrast: 170,
             callback: function (asciiString) {
-              DotNet.invokeMethodAsync('Client', 'UpdateAsciiVideo', asciiString);
+              DotNet.invokeMethodAsync('Client', 'OnCameraFrame', asciiString);
             }
           })
         },

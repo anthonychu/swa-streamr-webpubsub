@@ -1,15 +1,5 @@
 {
     "navigationFallback": {
         "rewrite": "/index.html"
-    },
-    "auth": {
-        "identityProviders": {
-            "gitHub": {
-                "registration": {
-                    "clientIdSettingName": "GITHUB_CLIENT_ID",
-                    "clientSecretSettingName": "GITHUB_CLIENT_SECRET"
-                }
-            }
-        }
     }
 }

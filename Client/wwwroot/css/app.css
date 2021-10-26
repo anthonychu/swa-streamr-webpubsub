@@ -73,7 +73,7 @@ a, .btn-link {
     display: inline-block;
     margin: 10px;
     text-align: center;
-    width: 425px;
+    min-width: 425px;
     height: 350px;
     vertical-align: top;
 }
