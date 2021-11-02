@@ -62,3 +62,26 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+
+
+.video-content {
+    min-height: 80vh;
+}
+
+.user-video {
+    display: inline-block;
+    margin: 10px;
+    text-align: center;
+    min-width: 425px;
+    height: 350px;
+    vertical-align: top;
+}
+
+    .user-video pre {
+        font-size: 8px;
+    }
+
+#myCanvas {
+    display: none;
+}
