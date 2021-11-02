@@ -75,6 +75,7 @@
             if (userInfo != null) 
             {
                 username = userInfo.ClientPrincipal?.UserDetails ?? "";
+                StateHasChanged();
             }
         }
         catch (Exception ex)
