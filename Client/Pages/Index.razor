@@ -13,6 +13,10 @@
 <div class="video-content">
     <div>
         <b>@StreamCount streaming</b>
+        @if (!connected)
+        {
+            <span style="margin-left: 12px;">connecting...</span>
+        }
     </div>
     <hr />
     <div class="user-video">
@@ -61,6 +65,7 @@
     private string clientId = Guid.NewGuid().ToString();
     private string username = "";
     private Timer? timer;
+    private bool connected = false;
     private int StreamCount => (videoStarted ? 1 : 0) + otherVideos.Count;
 
     private bool IsLoggedIn
@@ -73,7 +78,8 @@
         
 #if DEBUG
         // wait for debugging proxy to start
-        await Task.Delay(2000);
+        // https://docs.microsoft.com/en-us/aspnet/core/blazor/debug?view=aspnetcore-6.0&tabs=visual-studio-code#breakpoints-in-oninitializedasync-not-hit
+        await Task.Delay(3000);
 #endif
 
         // get logged in user id
@@ -100,14 +106,13 @@
         {
             throw new Exception("Unable to retrieve connection string");
         }
-        Console.WriteLine(connectionInfo.Uri);
 
         // connect to Azure Web PubSub
         var websocket = new ClientWebSocket();
         websocket.Options.AddSubProtocol("json.webpubsub.azure.v1");
         await websocket.ConnectAsync(new Uri(connectionInfo.Uri), CancellationToken.None);
         Console.WriteLine("Connected");
-
+        connected = true;
 
         Action<Frame> onReceivedFrame = (frame) =>
         {
@@ -159,6 +164,11 @@
                 dataType = "json",
                 noEcho = true
             };
+
+            if (!connected)
+            {
+                return;
+            }
 
             await websocket.SendAsync(
                 Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message)),
