@@ -8,9 +8,13 @@
 @inject IJSRuntime JSRuntime;
 @inject NavigationManager NavManager;
 
-<PageTitle>StreamR</PageTitle>
+<PageTitle>Blazor ASCII Camera</PageTitle>
 
 <div class="video-content">
+    <div>
+        <b>@StreamCount streaming</b>
+    </div>
+    <hr />
     <div class="user-video">
         <pre>@asciiVideo</pre>
         @if (IsLoggedIn)
@@ -57,6 +61,7 @@
     private string clientId = Guid.NewGuid().ToString();
     private string username = "";
     private Timer? timer;
+    private int StreamCount => (videoStarted ? 1 : 0) + otherVideos.Count;
 
     private bool IsLoggedIn
     {
