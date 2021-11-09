@@ -65,6 +65,12 @@
 
     protected override async Task OnInitializedAsync()
     {
+        
+#if DEBUG
+        // wait for debugging proxy to start
+        await Task.Delay(2000);
+#endif
+
         // get logged in user id
         try
         {

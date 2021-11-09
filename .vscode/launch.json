@@ -2,10 +2,42 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch Blazor WebAssembly",
+            "type": "blazorwasm",
+            "webRoot": "${workspaceFolder}/Client",
+            "url": "http://localhost:4280",
+            "request": "attach",
+            "presentation": {
+                "hidden": true
+            },
+            "timeout": 60000,
+            "browser": "edge"
+        },
+        {
             "name": "Attach to .NET Functions",
             "type": "coreclr",
             "request": "attach",
-            "processId": "${command:azureFunctions.pickProcess}"
+            "processId": "${command:azureFunctions.pickProcess}",
+            "presentation": {
+                "hidden": true
+            }
+        },
+        {
+            "name": "Start Static Web Apps CLI",
+            "type": "node-terminal",
+            "request": "launch",
+            "command": "swa start http://localhost:5000 --run \"dotnet run\" --api-location http://localhost:7071",
+            "cwd": "${workspaceFolder}/Client"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Debug application",
+            "configurations": [
+                "Attach to .NET Functions",
+                "Launch Blazor WebAssembly",
+                "Start Static Web Apps CLI"
+            ]
         }
     ]
 }
