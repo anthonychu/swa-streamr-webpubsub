@@ -7,13 +7,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Azure.Messaging.WebPubSub;
 using System.Collections.Generic;
+using ServerlessStreamR.Shared;
 
 namespace Api
 {
-    public static class Connection
+    public class Connection
     {
         [FunctionName("Connection")]
-        public static async Task<IActionResult> Run(
+        public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest req,
             ILogger log)
         {
@@ -36,12 +37,6 @@ namespace Api
                 Uri = uri.AbsoluteUri,
                 CanSend = canSend
             });
-        }
-
-        public class ConnectionResult
-        {
-            public string Uri { get; set; }
-            public bool CanSend { get; set; }
         }
     }
 }

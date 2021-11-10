@@ -3,8 +3,9 @@
 @using System.Text
 @using System.Text.Json
 @using ServerlessStreamR.Client.Models
-@inject HttpClient Http
+@using ServerlessStreamR.Shared
 
+@inject HttpClient Http
 @inject IJSRuntime JSRuntime;
 @inject NavigationManager NavManager;
 
@@ -64,7 +65,6 @@
     private string asciiVideo = "";
     private IList<UserVideo> otherVideos = new List<UserVideo>();
     private bool videoStarted = false;
-    //private HubConnection hubConnection;
     private string apiBaseUrl = "";
     private string clientId = Guid.NewGuid().ToString();
     private string username = "";
@@ -84,7 +84,7 @@
 #if DEBUG
         // wait for debugging proxy to start
         // https://docs.microsoft.com/en-us/aspnet/core/blazor/debug?view=aspnetcore-6.0&tabs=visual-studio-code#breakpoints-in-oninitializedasync-not-hit
-        await Task.Delay(3000);
+        await Task.Delay(2000);
 #endif
 
         // get logged in user id
@@ -252,12 +252,6 @@
                 onFrame(response.data);
             }
         }
-    }
-
-    public class ConnectionResult
-    {
-        public string Uri { get; set; } = "";
-        public bool CanSend { get; set; }
     }
 
     public class ServerResponse
