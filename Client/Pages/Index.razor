@@ -11,6 +11,7 @@
 <PageTitle>Blazor ASCII Camera</PageTitle>
 
 <div class="video-content">
+    <h3>@Domain</h3>
     <div>
         <b>@StreamCount streaming</b>
         @if (!connected)
@@ -21,22 +22,25 @@
     <hr />
     <div class="user-video">
         <pre>@asciiVideo</pre>
-        @if (IsLoggedIn)
+        @if (connected)
         {
-            @username @:&nbsp;
-            @if (videoStarted)
+            @if (IsLoggedIn)
             {
-                <button type="button" class="btn btn-primary" @onclick="StopVideo">Stop</button>
+                @username @:&nbsp;
+                @if (videoStarted)
+                {
+                    <button type="button" class="btn btn-primary" @onclick="StopVideo">Stop</button>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-primary" @onclick="StartVideo" >Start</button>
+                    <button type="button" class="btn" @onclick="Logout" >Logout</button>
+                }
             }
             else
             {
-                <button type="button" class="btn btn-primary" @onclick="StartVideo" >Start</button>
-                <button type="button" class="btn" @onclick="Logout" >Logout</button>
+                <button type="button" class="btn btn-primary" @onclick="Login" >Login</button>
             }
-        }
-        else
-        {
-            <button type="button" class="btn btn-primary" @onclick="Login" >Login</button>
         }
     </div>
 
@@ -66,6 +70,7 @@
     private string username = "";
     private Timer? timer;
     private bool connected = false;
+    private string Domain => NavManager.BaseUri;
     private int StreamCount => (videoStarted ? 1 : 0) + otherVideos.Count;
 
     private bool IsLoggedIn

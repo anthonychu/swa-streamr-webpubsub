@@ -26,7 +26,7 @@
             "name": "Start Static Web Apps CLI",
             "type": "node-terminal",
             "request": "launch",
-            "command": "swa start http://localhost:5000 --run \"dotnet run\" --api-location http://localhost:7071",
+            "command": "swa start http://localhost:5000 --run \"dotnet watch run\" --api-location http://localhost:7071",
             "cwd": "${workspaceFolder}/Client"
         }
     ],
