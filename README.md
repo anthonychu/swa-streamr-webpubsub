@@ -72,8 +72,10 @@ All of this was inspired by the original [StreamR sample](https://github.com/Sig
     rm -rf .github/workflows
     ```
 
-1. Push your changes to your fork.
+1. Commit and push your changes to your fork.
     ```bash
+    git add .
+    git commit -m "Remove workflow"
     git push
     ```
 
